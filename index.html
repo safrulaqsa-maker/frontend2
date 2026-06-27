@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Safruz Deployer Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg: #06080c; --bg2: #0d1018; --surface: #121620;
+      --border: rgba(212,175,55,0.15); --border2: rgba(212,175,55,0.3);
+      --gold: #d4af37; --gold-light: #f0d060; --gold-dark: #b8941f;
+      --text: #e8e6dd; --text2: #b0ae9e; --text3: #6b6858;
+      --success: #4caf84; --danger: #d4726a;
+      --radius: 12px; --radius2: 18px; --radius3: 28px;
+      --font: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace;
+      --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+      --shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); font-family:var(--font); color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px; background-image:radial-gradient(ellipse 70% 50% at 50% -10%, rgba(212,175,55,0.06) 0%, transparent 70%); }
+    
+    .login-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(6,8,12,0.96); backdrop-filter:blur(30px); z-index:1000; display:flex; align-items:center; justify-content:center; }
+    .login-overlay.hidden { display:none; }
+    .login-card { width:100%; max-width:420px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius3); padding:36px 28px; text-align:center; box-shadow:var(--shadow); }
+    .login-logo { font-size:2.4rem; color:var(--gold); margin-bottom:12px; }
+    .login-card h2 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:var(--gold); }
+    .step-indicator { display:flex; justify-content:center; gap:10px; margin:18px 0; }
+    .step-dot { width:10px; height:10px; border-radius:50%; background:var(--border); border:1px solid var(--border); }
+    .step-dot.active { background:var(--gold); border-color:var(--gold); }
+    .login-form-step { display:none; }
+    .login-form-step.active { display:block; }
+    .input-group { margin-bottom:14px; text-align:left; }
+    .input-group label { display:block; font-size:0.68rem; color:var(--text2); margin-bottom:4px; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
+    .input-wrapper { position:relative; }
+    .input-wrapper i { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--gold); opacity:0.7; }
+    .input-wrapper input { width:100%; padding:13px 14px 13px 40px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-size:0.85rem; }
+    .btn { padding:13px 24px; border:none; border-radius:var(--radius); font-weight:600; font-size:0.85rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-transform:uppercase; transition:var(--transition); }
+    .btn-primary { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:#1a1a0a; width:100%; }
+    .btn-ghost { background:transparent; border:1px solid var(--border); color:var(--text2); }
+    .login-error { color:var(--danger); font-size:0.75rem; margin-top:8px; }
+    .form-link { margin-top:14px; font-size:0.78rem; color:var(--text3); }
+    .form-link span { color:var(--gold); cursor:pointer; font-weight:600; }
+
+    .app-container { display:none; width:100%; max-width:1200px; }
+    .app-container.show { display:flex; gap:18px; }
+    .sidebar { width:260px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius3); padding:20px 14px; display:flex; flex-direction:column; gap:14px; box-shadow:var(--shadow); position:sticky; top:16px; height:calc(100vh - 40px); border-top:2px solid var(--gold-dark); }
+    .sidebar-header { text-align:center; }
+    .sidebar-logo { font-size:1.6rem; color:var(--gold); }
+    .sidebar-title { font-family:'Cormorant Garamond',serif; font-weight:700; font-size:1.1rem; color:var(--gold); margin-top:2px; }
+    .sidebar-nav { flex:1; display:flex; flex-direction:column; gap:2px; }
+    .sidebar-nav a { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:var(--radius); color:var(--text2); text-decoration:none; font-size:0.78rem; font-weight:500; cursor:pointer; border-left:3px solid transparent; transition:var(--transition); }
+    .sidebar-nav a i { width:18px; text-align:center; }
+    .sidebar-nav a:hover { background:rgba(212,175,55,0.04); color:var(--text); }
+    .sidebar-nav a.active { background:linear-gradient(90deg,rgba(212,175,55,0.1),transparent); color:var(--gold); border-left-color:var(--gold); font-weight:600; }
+    .sidebar-footer { border-top:1px solid var(--border); padding-top:10px; display:flex; flex-direction:column; gap:6px; }
+    .user-card { display:flex; align-items:center; gap:10px; }
+    .user-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:#1a1a0a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem; }
+    .user-name-side { font-weight:600; font-size:0.8rem; }
+    .btn-logout-side { width:100%; padding:9px; border:1px solid var(--border); background:transparent; color:var(--text2); border-radius:var(--radius); cursor:pointer; font-size:0.7rem; text-align:center; }
+    .btn-logout-side:hover { border-color:var(--danger); color:var(--danger); }
+
+    .main-content { flex:1; display:flex; flex-direction:column; gap:14px; min-width:0; }
+    .top-bar { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius3); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--shadow); border-bottom:2px solid var(--gold-dark); }
+    .top-bar-title { font-family:'Cormorant Garamond',serif; font-weight:700; font-size:1.2rem; color:var(--gold); }
+    .content-area { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius3); padding:20px; box-shadow:var(--shadow); flex:1; overflow-y:auto; max-height:calc(100vh - 150px); }
+    .page { display:none; }
+    .page.active { display:block; }
+    .toast { position:fixed; top:16px; right:16px; padding:12px 18px; border-radius:var(--radius); font-size:0.78rem; font-weight:500; z-index:2000; backdrop-filter:blur(14px); display:none; }
+    .toast.show { display:block; }
+    .toast.success { background:rgba(76,175,132,0.12); border:1px solid var(--success); color:var(--success); }
+    .toast.error { background:rgba(212,114,106,0.12); border:1px solid var(--danger); color:var(--danger); }
+    .watermark { text-align:center; padding-top:12px; margin-top:8px; border-top:1px solid var(--border); font-size:0.65rem; color:var(--text3); }
+
+    @media (max-width:768px) {
+      .app-container.show { flex-direction:column; }
+      .sidebar { width:100%; height:auto; position:static; }
+      .sidebar-nav { flex-direction:row; flex-wrap:wrap; }
+      .sidebar-nav a { font-size:0.7rem; padding:8px 10px; border-left:none; border-bottom:2px solid transparent; }
+      .sidebar-nav a.active { border-bottom-color:var(--gold); border-left-color:transparent; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <div class="login-logo"><i class="fas fa-crown"></i></div>
+      <h2>Safruz Deployer</h2>
+      <p style="color:var(--text3);font-size:0.8rem;margin-bottom:18px;">Ultimate Deployment</p>
+      <div class="step-indicator"><span class="step-dot active" id="stepDot1"></span><span class="step-dot" id="stepDot2"></span></div>
+      <div class="login-form-step active" id="loginStep1">
+        <div class="input-group"><label>Username</label><div class="input-wrapper"><i class="fas fa-user"></i><input type="text" id="loginUser" placeholder="Masukkan username"></div></div>
+        <div class="input-group"><label>Password</label><div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="loginPass" placeholder="Password"></div></div>
+        <div class="login-error" id="loginError"></div>
+        <button class="btn btn-primary" id="btnLogin">Masuk</button>
+        <div class="form-link">Belum punya akun? <span id="showRegisterLink">Daftar</span></div>
+      </div>
+      <div class="login-form-step" id="registerStep">
+        <div class="input-group"><label>Username</label><div class="input-wrapper"><i class="fas fa-user"></i><input type="text" id="regUser"></div></div>
+        <div class="input-group"><label>Password</label><div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="regPass"></div></div>
+        <div class="login-error" id="regError"></div>
+        <button class="btn btn-primary" id="btnRegister">Daftar</button>
+        <div class="form-link"><span id="showLoginLink">Kembali login</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container" id="appContainer">
+    <aside class="sidebar">
+      <div class="sidebar-header"><div class="sidebar-logo"><i class="fas fa-crown"></i></div><div class="sidebar-title">Safruz Deployer</div></div>
+      <nav class="sidebar-nav">
+        <a data-page="dashboard" class="active"><i class="fas fa-th-large"></i> Dashboard</a>
+        <a data-page="deploy"><i class="fas fa-rocket"></i> Deploy</a>
+        <a data-page="redeploy"><i class="fas fa-sync-alt"></i> Redeploy</a>
+        <a data-page="tools"><i class="fas fa-tools"></i> Tools</a>
+        <a data-page="chat"><i class="fas fa-comments"></i> Chat</a>
+        <a data-page="owner" id="navOwner" style="display:none"><i class="fas fa-crown"></i> Owner Panel</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-card"><div class="user-avatar" id="sidebarAvatar">U</div><div><div class="user-name-side" id="sidebarName">User</div></div></div>
+        <button class="btn-logout-side" id="btnLogoutSide">Keluar</button>
+      </div>
+    </aside>
+    <main class="main-content">
+      <div class="top-bar"><div class="top-bar-title" id="pageTitle">Dashboard</div><div class="clock-top" id="mainTime">--:--</div></div>
+      <div class="content-area" id="contentArea"></div>
+      <div class="watermark"><i class="fas fa-crown"></i> Hosting by <strong>Safruz</strong></div>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_BASE = '';
+    const $ = id => document.getElementById(id);
+    function toast(m,t='success'){ const e=$('toast'); e.textContent=m; e.className='toast show '+t; setTimeout(()=>e.classList.remove('show'),3000); }
+    function sanitize(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+    class App {
+      constructor(){
+        this.token = localStorage.getItem('token') || '';
+        this.user = null; this.isOwner = false;
+        this.deployState = { projectName:'safrul-deploy', htmlCode:'', files:[] };
+        this.redeployState = { url:'', projectName:'', htmlCode:'', files:[] };
+        this.init();
+      }
+      async api(endpoint, method='GET', body=null){
+        const h = {'Content-Type':'application/json'};
+        if(this.token) h['Authorization'] = 'Bearer '+this.token;
+        const res = await fetch(API_BASE+endpoint, {method, headers:h, body:body?JSON.stringify(body):null});
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.error || 'Gagal');
+        return data;
+      }
+      init(){
+        $('btnLogin').onclick = ()=>this.login();
+        $('showRegisterLink').onclick = ()=>{ $('loginStep1').classList.remove('active'); $('registerStep').classList.add('active'); };
+        $('showLoginLink').onclick = ()=>{ $('registerStep').classList.remove('active'); $('loginStep1').classList.add('active'); };
+        $('btnRegister').onclick = ()=>this.register();
+        this.bindNav();
+        this.render('dashboard');
+        setInterval(()=>$('mainTime').textContent=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),1000);
+        if(this.token) this.loadProfile().then(()=>this.showApp()).catch(()=>{ this.token=''; localStorage.removeItem('token'); });
+      }
+      async login(){
+        const u=$('loginUser').value.trim().toLowerCase(), p=$('loginPass').value;
+        if(!u||!p) return $('loginError').textContent='Isi username & password';
+        try{
+          const res = await this.api('/api/auth/login','POST',{username:u,password:p});
+          this.token = res.access_token; localStorage.setItem('token',res.access_token);
+          this.user = u; this.isOwner = res.role==='owner';
+          this.showApp();
+        }catch(e){ $('loginError').textContent=e.message; }
+      }
+      async register(){
+        const u=$('regUser').value.trim().toLowerCase(), p=$('regPass').value;
+        if(!u||!p) return $('regError').textContent='Isi username & password';
+        try{
+          await this.api('/api/auth/register','POST',{username:u,password:p,security_question:'',security_answer:''});
+          toast('Akun dibuat! Silakan login.');
+          $('registerStep').classList.remove('active'); $('loginStep1').classList.add('active');
+        }catch(e){ $('regError').textContent=e.message; }
+      }
+      async loadProfile(){
+        const res = await this.api('/api/user/me');
+        this.user = res.username; this.isOwner = res.role==='owner';
+      }
+      logout(){
+        this.token=''; localStorage.removeItem('token'); this.user=null; this.isOwner=false;
+        $('appContainer').classList.remove('show'); $('loginOverlay').classList.remove('hidden');
+      }
+      showApp(){
+        $('loginOverlay').classList.add('hidden'); $('appContainer').classList.add('show');
+        $('sidebarName').textContent=this.user; $('sidebarAvatar').textContent=this.user[0].toUpperCase();
+        $('navOwner').style.display=this.isOwner?'flex':'none';
+      }
+      bindNav(){
+        document.querySelectorAll('.sidebar-nav a').forEach(a=>a.onclick=()=>this.navigate(a.dataset.page));
+      }
+      navigate(page){
+        document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active'));
+        const nav=document.querySelector(`.sidebar-nav a[data-page="${page}"]`);
+        if(nav) nav.classList.add('active');
+        $('pageTitle').textContent = {dashboard:'Dashboard',deploy:'Deploy',redeploy:'Redeploy',tools:'Tools',chat:'Chat',owner:'Owner Panel'}[page]||'Dashboard';
+        this.render(page);
+      }
+      render(page){
+        const area = $('contentArea');
+        const t = {
+          dashboard: `<h2 style="color:var(--gold);margin-bottom:12px;">Dashboard</h2><p>Selamat datang, <strong>${this.user}</strong>!</p><div style="margin-top:20px;padding:16px;background:var(--bg2);border-radius:var(--radius);"><h3>Log Deploy</h3><div id="deployLogContainer">Memuat...</div></div>`,
+          deploy: this.deployHTML(),
+          redeploy: this.redeployHTML(),
+          tools: `<h2 style="color:var(--gold);margin-bottom:12px;">Tools</h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;">
+            <div style="background:var(--bg2);padding:16px;border-radius:var(--radius);"><h3>Password Generator</h3><input type="number" id="passLength" value="16" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:8px;color:var(--text);margin:8px 0;"><button class="btn btn-primary" id="genPassBtn">Generate</button><div id="passResult" style="margin-top:8px;"></div></div>
+            <div style="background:var(--bg2);padding:16px;border-radius:var(--radius);"><h3>Base64</h3><textarea id="base64Input" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:8px;color:var(--text);min-height:80px;"></textarea><button class="btn btn-primary" id="b64EncodeBtn">Encode</button><button class="btn btn-ghost" id="b64DecodeBtn">Decode</button><div id="base64Result" style="margin-top:8px;"></div></div>
+          </div>`,
+          chat: `<h2 style="color:var(--gold);margin-bottom:12px;">Chat</h2><div style="display:flex;flex-direction:column;height:50vh;background:var(--bg2);border-radius:var(--radius);overflow:hidden;"><div style="padding:12px;border-bottom:1px solid var(--border);"><select id="chatPartnerSelect" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:8px;color:var(--text);"></select></div><div id="chatMessages" style="flex:1;overflow-y:auto;padding:12px;"></div><div style="display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);"><input type="text" id="chatInput" placeholder="Ketik pesan..." style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:8px;color:var(--text);"><button class="btn btn-primary" id="sendChatBtn" style="width:auto;">Kirim</button></div></div>`,
+          owner: `<h2 style="color:var(--gold);margin-bottom:12px;">Owner Panel</h2><p>Kelola user</p><div id="userTableBody"></div>`
+        };
+        area.innerHTML = t[page] || '';
+        if(page==='dashboard') this.loadLogs();
+        if(page==='deploy') this.bindDeploy();
+        if(page==='redeploy') this.bindRedeploy();
+        if(page==='tools') this.bindTools();
+        if(page==='chat') this.bindChat();
+        if(page==='owner') this.bindOwner();
+      }
+      deployHTML(){
+        return `<h2 style="color:var(--gold);margin-bottom:12px;">Deploy</h2>
+          <div style="margin-bottom:14px;"><label>Project Name</label><input class="form-input" id="projectName" value="${this.deployState.projectName}" style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px;color:var(--text);margin-top:4px;"></div>
+          <div class="upload-zone" id="uploadZone" style="border:2px dashed var(--border);border-radius:var(--radius2);padding:24px;text-align:center;cursor:pointer;margin-bottom:10px;"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:var(--gold);"></i><p>Drop file / klik</p></div>
+          <input type="file" id="fileInput" multiple style="display:none;"><div class="file-chips" id="fileChips"></div>
+          <textarea id="htmlCode" placeholder="Atau tulis kode..." style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px;color:var(--text);min-height:120px;resize:vertical;">${this.deployState.htmlCode}</textarea>
+          <button class="btn btn-primary" id="deployBtn" style="margin-top:12px;">🚀 Deploy</button>`;
+      }
+      redeployHTML(){
+        return `<h2 style="color:var(--gold);margin-bottom:12px;">Redeploy</h2>
+          <input class="form-input" id="redeployUrl" value="${this.redeployState.url}" placeholder="URL project" style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px;color:var(--text);margin-bottom:8px;">
+          <input class="form-input" id="redeployProjectName" value="${this.redeployState.projectName}" placeholder="Nama Project" style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px;color:var(--text);margin-bottom:8px;">
+          <div class="upload-zone" id="uploadZoneRedeploy" style="border:2px dashed var(--border);border-radius:var(--radius2);padding:24px;text-align:center;cursor:pointer;margin-bottom:10px;"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:var(--gold);"></i><p>Drop file baru</p></div>
+          <input type="file" id="fileInputRedeploy" multiple style="display:none;"><div class="file-chips" id="fileChipsRedeploy"></div>
+          <textarea id="htmlCodeRedeploy" placeholder="Kode baru..." style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px;color:var(--text);min-height:120px;resize:vertical;">${this.redeployState.htmlCode}</textarea>
+          <button class="btn btn-primary" id="redeployBtn" style="margin-top:12px;">🔄 Update</button>`;
+      }
+      bindDeploy(){
+        this.setupUpload('uploadZone','fileInput','fileChips',this.deployState.files);
+        $('htmlCode').oninput=()=>this.deployState.htmlCode=$('htmlCode').value;
+        $('projectName').oninput=()=>this.deployState.projectName=$('projectName').value;
+        $('deployBtn').onclick=()=>this.deploy('new');
+      }
+      bindRedeploy(){
+        this.setupUpload('uploadZoneRedeploy','fileInputRedeploy','fileChipsRedeploy',this.redeployState.files);
+        $('htmlCodeRedeploy').oninput=()=>this.redeployState.htmlCode=$('htmlCodeRedeploy').value;
+        $('redeployUrl').oninput=()=>this.redeployState.url=$('redeployUrl').value;
+        $('redeployProjectName').oninput=()=>this.redeployState.projectName=$('redeployProjectName').value;
+        $('redeployBtn').onclick=()=>this.deploy('redeploy');
+      }
+      setupUpload(zoneId,inputId,chipsId,arr){
+        const zone=$(zoneId),input=$(inputId);
+        zone.onclick=()=>input.click();
+        input.onchange=()=>{ for(let f of input.files) if(!arr.find(x=>x.name===f.name)) arr.push(f); this.renderChips(arr,chipsId); input.value=''; };
+        zone.ondragover=e=>e.preventDefault();
+        zone.ondrop=e=>{ e.preventDefault(); for(let f of e.dataTransfer.files) if(!arr.find(x=>x.name===f.name)) arr.push(f); this.renderChips(arr,chipsId); };
+      }
+      renderChips(arr,chipsId){
+        const c=$(chipsId); if(!arr.length){ c.innerHTML=''; return; }
+        c.innerHTML=arr.map((f,i)=>`<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;font-size:0.7rem;margin:4px;">${sanitize(f.name)} (${Math.round(f.size/1024)}KB) <span style="cursor:pointer;color:var(--text3);" data-index="${i}">✕</span></span>`).join('');
+        c.querySelectorAll('span span').forEach(b=>b.onclick=e=>{ arr.splice(parseInt(e.target.dataset.index),1); this.renderChips(arr,chipsId); });
+      }
+      async deploy(mode){
+        const s = mode==='redeploy'?this.redeployState:this.deployState;
+        if(!s.files.length&&!s.htmlCode) return toast('Masukkan file/kode','error');
+        const name = (s.projectName||'safrul-deploy').replace(/[^a-z0-9-]/g,'-')+'-'+Date.now().toString().slice(-8);
+        try{
+          const payload = {project_name:name, html_code:s.htmlCode, files:[]};
+          for(let f of s.files) payload.files.push({file:f.name,data:await new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result.split(',')[1]); fr.readAsDataURL(f); }),encoding:'base64'});
+          const res = await this.api('/api/deploy','POST',payload);
+          toast('✅ LIVE! '+res.url); window.open(res.url,'_blank');
+        }catch(e){ toast('❌ '+e.message,'error'); }
+      }
+      async loadLogs(){
+        try{
+          const logs = await this.api('/api/deploy/logs');
+          const c=$('deployLogContainer');
+          if(!logs.length) c.innerHTML='Belum ada deployment.';
+          else c.innerHTML=logs.map(l=>`<div style="padding:8px;border-bottom:1px solid var(--border);font-size:0.8rem;">${sanitize(l.project_name)} - <a href="${sanitize(l.url)}" target="_blank" style="color:var(--gold);">Link</a> - ${l.status==='success'?'✅':'❌'}</div>`).join('');
+        }catch(e){}
+      }
+      bindTools(){
+        $('genPassBtn').onclick=()=>{ const len=parseInt($('passLength').value)||16; $('passResult').textContent=Array.from({length:len},()=>'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'[Math.floor(Math.random()*72)]).join(''); };
+        $('b64EncodeBtn').onclick=()=>$('base64Result').textContent=btoa($('base64Input').value);
+        $('b64DecodeBtn').onclick=()=>{ try{$('base64Result').textContent=atob($('base64Input').value);}catch(e){$('base64Result').textContent='Error';} };
+      }
+      bindChat(){
+        $('chatPartnerSelect').onchange=()=>this.renderChat();
+        $('sendChatBtn').onclick=()=>{
+          const p=$('chatPartnerSelect').value, t=$('chatInput').value.trim();
+          if(!p||!t) return;
+          this.api('/api/chat/send','POST',{to:p,text:t}).then(()=>{ $('chatInput').value=''; this.renderChat(); });
+        };
+        setInterval(()=>{ if($('contentArea').querySelector('#chatMessages')) this.renderChat(); },2000);
+        this.populateChatPartners();
+      }
+      async populateChatPartners(){
+        try{
+          const users = await this.api('/api/owner/users');
+          const s=$('chatPartnerSelect'); if(!s) return;
+          s.innerHTML = users.filter(u=>u.username!==this.user).map(u=>`<option value="${u.username}">${u.username}</option>`).join('');
+        }catch(e){}
+      }
+      async renderChat(){
+        const p=$('chatPartnerSelect')?.value; if(!p) return;
+        const cid=[this.user,p].sort().join('_');
+        try{
+          const msgs=await this.api(`/api/chat/messages/${cid}`);
+          $('chatMessages').innerHTML=msgs.map(m=>`<div style="padding:6px 10px;margin:4px;border-radius:8px;max-width:70%;${m.sender===this.user?'background:var(--gold);color:#000;align-self:flex-end;':'background:var(--bg);align-self:flex-start;'}">${sanitize(m.text)}</div>`).join('');
+        }catch(e){}
+      }
+      bindOwner(){
+        this.renderOwnerTable();
+      }
+      async renderOwnerTable(){
+        try{
+          const users = await this.api('/api/owner/users');
+          $('userTableBody').innerHTML = users.map(u=>`<div style="padding:8px;border-bottom:1px solid var(--border);">${sanitize(u.username)} - ${u.role} - ${u.banned?'BANNED':'Active'}</div>`).join('');
+        }catch(e){}
+      }
+    }
+    window.app = new App();
+    $('btnLogoutSide').onclick = ()=>window.app.logout();
+  </script>
+</body>
+</html>
