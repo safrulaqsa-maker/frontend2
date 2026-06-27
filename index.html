@@ -4,193 +4,66 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Safruz Deployer Pro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
-      --bg: #06080c; --bg2: #0d1018; --surface: #121620; --surface2: #1a1e2a;
-      --border: rgba(212,175,55,0.15); --border2: rgba(212,175,55,0.3);
+      --bg: #06080c; --bg2: #0d1018; --surface: #121620;
+      --border: rgba(212,175,55,0.15); --border2: rgba(212,175,55,0.25);
       --gold: #d4af37; --gold-light: #f0d060; --gold-dark: #b8941f;
-      --text: #e8e6dd; --text2: #b0ae9e; --text3: #6b6858;
-      --success: #4caf84; --danger: #d4726a; --info: #6b9bd2; --warning: #d4a04a;
+      --text: #e8e6dd; --text2: #9a968e; --text3: #5c5850;
+      --success: #4caf84; --danger: #d4726a;
       --radius: 12px; --radius2: 18px; --radius3: 28px;
       --font: 'Inter', sans-serif; --mono: 'JetBrains Mono', monospace; --classic: 'Cormorant Garamond', serif;
       --transition: 0.25s ease;
       --shadow: 0 8px 32px rgba(0,0,0,0.5);
-      --shadow-gold: 0 4px 16px rgba(212,175,55,0.15);
     }
     * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      background: var(--bg); font-family: var(--font); color: var(--text);
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      padding: 16px; background-attachment: fixed;
-      background-image: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(212,175,55,0.06) 0%, transparent 70%),
-                        radial-gradient(ellipse 40% 40% at 80% 90%, rgba(212,175,55,0.04) 0%, transparent 70%);
-    }
-    /* Login */
-    .login-overlay {
-      position: fixed; top:0; left:0; width:100%; height:100%;
-      background: rgba(6,8,12,0.96); backdrop-filter: blur(30px); z-index: 1000;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .login-overlay.hidden { display: none; }
-    .login-card {
-      width: 100%; max-width: 420px; background: var(--surface);
-      border: 1px solid var(--border); border-radius: var(--radius3);
-      padding: 40px 32px; text-align: center; box-shadow: var(--shadow), var(--shadow-gold);
-      position: relative; overflow: hidden;
-    }
-    .login-card::before {
-      content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
-      width:60%; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent);
-    }
-    .login-logo { font-size: 2.6rem; color: var(--gold); margin-bottom: 12px; filter:drop-shadow(0 0 10px rgba(212,175,55,0.5)); }
-    .login-card h2 { font-family: var(--classic); font-size: 2rem; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
-    .login-card .subtitle { color: var(--text3); font-size: 0.85rem; margin-bottom: 24px; font-style: italic; }
-    #googleSignIn { margin-bottom: 20px; display: flex; justify-content: center; }
-    .divider { display:flex; align-items:center; gap:12px; margin:16px 0; color:var(--text3); font-size:0.75rem; }
-    .divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border); }
-    .input-group { margin-bottom: 14px; text-align: left; }
-    .input-group label { display: block; font-size: 0.68rem; color: var(--text2); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-    .input-wrapper { position: relative; }
-    .input-wrapper i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gold); opacity: 0.7; font-size: 0.85rem; }
-    .input-wrapper input {
-      width: 100%; padding: 13px 14px 13px 40px; background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); color: var(--text); font-size: 0.85rem; transition: var(--transition);
-    }
-    .input-wrapper input:focus { outline: none; border-color: var(--gold); }
-    .btn {
-      padding: 13px 20px; border: none; border-radius: var(--radius); font-weight: 600; font-size: 0.85rem;
-      cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center;
-      justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.3px;
-    }
-    .btn-primary { background: linear-gradient(135deg, var(--gold-dark), var(--gold)); color: #1a1a0a; width: 100%; }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,175,55,0.4); }
-    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text2); width: 100%; }
-    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
-    .btn-sm { padding: 8px 16px; font-size: 0.7rem; width: auto; }
-    .login-error { color: var(--danger); font-size: 0.75rem; margin-top: 8px; min-height: 18px; }
-    .form-link { margin-top: 14px; font-size: 0.78rem; color: var(--text3); }
-    .form-link span { color: var(--gold); cursor: pointer; font-weight: 600; }
-
-    /* App */
-    .app-container { display: none; width: 100%; max-width: 1300px; position: relative; z-index: 1; }
-    .app-container.show { display: flex; gap: 18px; }
-    .sidebar {
-      width: 270px; background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius3); padding: 20px 14px; display: flex; flex-direction: column; gap: 14px;
-      box-shadow: var(--shadow); position: sticky; top: 16px; height: calc(100vh - 40px);
-      border-top: 2px solid var(--gold-dark); backdrop-filter: blur(10px);
-    }
-    .sidebar-header { text-align: center; }
-    .sidebar-logo { font-size: 1.6rem; color: var(--gold); filter: drop-shadow(0 0 8px rgba(212,175,55,0.4)); }
-    .sidebar-title { font-family: var(--classic); font-weight: 700; font-size: 1.2rem; color: var(--gold); }
-    .sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-    .sidebar-nav a {
-      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-      border-radius: var(--radius); color: var(--text2); text-decoration: none;
-      font-size: 0.8rem; font-weight: 500; cursor: pointer; border-left: 3px solid transparent;
-      transition: var(--transition);
-    }
-    .sidebar-nav a i { width: 18px; text-align: center; }
-    .sidebar-nav a:hover { background: rgba(212,175,55,0.04); color: var(--text); }
-    .sidebar-nav a.active { background: linear-gradient(90deg, rgba(212,175,55,0.1), transparent); color: var(--gold); border-left-color: var(--gold); font-weight: 600; }
-    .sidebar-footer { border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
-    .user-card { display: flex; align-items: center; gap: 10px; }
-    .user-avatar {
-      width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-      color: #1a1a0a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;
-    }
-    .user-name-side { font-weight: 600; font-size: 0.8rem; }
-    .btn-logout-side {
-      width: 100%; padding: 9px; border: 1px solid var(--border); background: transparent;
-      color: var(--text2); border-radius: var(--radius); cursor: pointer; font-size: 0.7rem; text-align: center;
-    }
-    .btn-logout-side:hover { border-color: var(--danger); color: var(--danger); background: rgba(212,114,106,0.05); }
-
-    .main-content { flex: 1; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-    .top-bar {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius3);
-      padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;
-      box-shadow: var(--shadow); border-bottom: 2px solid var(--gold-dark);
-    }
-    .top-bar-title { font-family: var(--classic); font-weight: 700; font-size: 1.3rem; color: var(--gold); }
-    .limit-badge {
-      padding: 6px 14px; background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 20px; font-size: 0.7rem; color: var(--text2);
-    }
-    .limit-badge span { font-weight: 700; color: var(--gold); font-family: var(--mono); }
-    .content-area {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius3);
-      padding: 22px; box-shadow: var(--shadow); flex: 1; overflow-y: auto; max-height: calc(100vh - 150px);
-    }
-    .page { display: none; animation: fadeIn 0.3s ease; }
-    .page.active { display: block; }
+    body { background:var(--bg); font-family:var(--font); color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px; background-attachment:fixed; background-image:radial-gradient(ellipse 70% 50% at 50% -10%, rgba(212,175,55,0.06) 0%, transparent 70%); }
+    .login-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(6,8,12,0.96); backdrop-filter:blur(30px); z-index:1000; display:flex; align-items:center; justify-content:center; }
+    .login-overlay.hidden { display:none; }
+    .login-card { width:100%; max-width:420px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius3); padding:36px 28px; text-align:center; box-shadow:var(--shadow); }
+    .login-logo { font-size:2.4rem; color:var(--gold); margin-bottom:12px; }
+    .login-card h2 { font-family:var(--classic); font-size:1.8rem; font-weight:700; color:var(--gold); }
+    .step-indicator { display:flex; justify-content:center; gap:10px; margin:18px 0; }
+    .step-dot { width:8px; height:8px; border-radius:50%; background:var(--border); border:1px solid var(--border); }
+    .step-dot.active { background:var(--gold); border-color:var(--gold); }
+    .login-form-step { display:none; }
+    .login-form-step.active { display:block; animation:fadeIn 0.3s ease; }
     @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-    .section { margin-bottom: 20px; }
-    .section-title { font-family: var(--classic); font-weight: 700; font-size: 1.1rem; color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 16px; }
-    .form-input, .form-textarea {
-      width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 10px 14px; color: var(--text); font-size: 0.8rem; transition: var(--transition); margin-bottom: 8px;
-    }
-    .form-textarea { min-height: 100px; resize: vertical; font-family: var(--mono); }
-    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--gold); }
-    .upload-zone {
-      border: 2px dashed var(--border); border-radius: var(--radius2); padding: 28px;
-      text-align: center; cursor: pointer; margin-bottom: 10px; transition: var(--transition);
-    }
-    .upload-zone:hover { border-color: var(--gold); background: rgba(212,175,55,0.02); }
-    .upload-zone i { font-size: 2rem; color: var(--gold); }
-    .file-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-    .file-chip {
-      display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px;
-      background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; font-size: 0.7rem;
-    }
-    .file-chip .chip-remove { cursor: pointer; color: var(--text3); }
-    .file-chip .chip-remove:hover { color: var(--danger); }
-    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-    .tool-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 16px; transition: var(--transition); }
-    .tool-card:hover { border-color: var(--gold); box-shadow: var(--shadow-gold); }
-    .tool-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; color: var(--gold); }
-    .tool-result {
-      margin-top: 8px; padding: 10px; background: var(--surface); border-radius: var(--radius);
-      font-family: var(--mono); font-size: 0.73rem; word-break: break-all; border: 1px solid var(--border);
-    }
-    .user-table, .deploy-log-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-    .user-table th, .deploy-log-table th {
-      text-align: left; padding: 10px 12px; color: var(--gold); font-size: 0.65rem;
-      text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border);
-    }
-    .user-table td, .deploy-log-table td { padding: 10px 12px; border-bottom: 1px solid rgba(212,175,55,0.06); }
-    .deploy-log-table a { color: var(--gold); text-decoration: none; }
-    .chat-container {
-      display: flex; flex-direction: column; height: 55vh; border: 1px solid var(--border);
-      border-radius: var(--radius2); overflow: hidden; background: var(--bg2);
-    }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-    .chat-msg { max-width: 75%; padding: 8px 12px; border-radius: var(--radius); font-size: 0.8rem; line-height: 1.4; }
-    .chat-msg.sent { align-self: flex-end; background: linear-gradient(135deg, var(--gold-dark), var(--gold)); color: #1a1a0a; }
-    .chat-msg.received { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); }
-    .chat-input-row { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); background: var(--surface); }
-    .chat-input-row input { flex: 1; }
-    .toast {
-      position: fixed; top: 16px; right: 16px; padding: 12px 18px; border-radius: var(--radius);
-      font-size: 0.8rem; font-weight: 500; z-index: 2000; backdrop-filter: blur(14px);
-      display: none; box-shadow: var(--shadow);
-    }
-    .toast.show { display: block; animation: fadeIn 0.3s ease; }
-    .toast.success { background: rgba(76,175,132,0.12); border: 1px solid var(--success); color: var(--success); }
-    .toast.error { background: rgba(212,114,106,0.12); border: 1px solid var(--danger); color: var(--danger); }
-    .watermark { text-align: center; padding-top: 12px; margin-top: 8px; border-top: 1px solid var(--border); font-size: 0.65rem; color: var(--text3); }
-    @media (max-width: 768px) {
-      .app-container.show { flex-direction: column; }
-      .sidebar { width: 100%; height: auto; position: static; border-radius: var(--radius2); }
-      .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
-      .sidebar-nav a { font-size: 0.7rem; padding: 8px 10px; border-left: none; border-bottom: 2px solid transparent; }
-      .sidebar-nav a.active { border-bottom-color: var(--gold); }
-      .tools-grid { grid-template-columns: 1fr; }
-    }
+    .input-group { margin-bottom:14px; text-align:left; }
+    .input-group label { display:block; font-size:0.68rem; color:var(--text2); margin-bottom:4px; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
+    .input-wrapper { position:relative; }
+    .input-wrapper i { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--gold); opacity:0.7; }
+    .input-wrapper input { width:100%; padding:13px 14px 13px 40px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-size:0.85rem; }
+    .input-wrapper input:focus { outline:none; border-color:var(--gold); }
+    .btn { padding:13px 20px; border:none; border-radius:var(--radius); font-weight:600; font-size:0.85rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-transform:uppercase; }
+    .btn-primary { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:#1a1a0a; width:100%; }
+    .btn-ghost { background:transparent; border:1px solid var(--border); color:var(--text2); width:100%; }
+    .login-error { color:var(--danger); font-size:0.75rem; margin-top:8px; }
+    .form-link { margin-top:14px; font-size:0.78rem; color:var(--text3); }
+    .form-link span { color:var(--gold); cursor:pointer; font-weight:600; }
+
+    .app-container { display:none; width:100%; max-width:1300px; position:relative; z-index:1; }
+    .app-container.show { display:flex; gap:18px; }
+    .sidebar { width:270px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius3); padding:20px 14px; display:flex; flex-direction:column; gap:14px; box-shadow:var(--shadow); position:sticky; top:16px; height:calc(100vh - 40px); border-top:2px solid var(--gold-dark); }
+    .sidebar-nav { flex:1; display:flex; flex-direction:column; gap:2px; }
+    .sidebar-nav a { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:var(--radius); color:var(--text2); font-size:0.8rem; cursor:pointer; border-left:3px solid transparent; }
+    .sidebar-nav a i { width:18px; }
+    .sidebar-nav a:hover { background:rgba(212,175,55,0.04); color:var(--text); }
+    .sidebar-nav a.active { background:linear-gradient(90deg,rgba(212,175,55,0.1),transparent); color:var(--gold); border-left-color:var(--gold); font-weight:600; }
+    .sidebar-footer { border-top:1px solid var(--border); padding-top:12px; display:flex; flex-direction:column; gap:8px; }
+    .user-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:#1a1a0a; display:flex; align-items:center; justify-content:center; font-weight:700; }
+    .btn-logout-side { width:100%; padding:9px; border:1px solid var(--border); background:transparent; color:var(--text2); border-radius:var(--radius); cursor:pointer; font-size:0.7rem; }
+    .main-content { flex:1; display:flex; flex-direction:column; gap:14px; }
+    .top-bar { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius3); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--shadow); border-bottom:2px solid var(--gold-dark); }
+    .content-area { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius3); padding:22px; box-shadow:var(--shadow); flex:1; overflow-y:auto; max-height:calc(100vh - 150px); }
+    .page { display:none; animation:fadeIn 0.3s ease; }
+    .page.active { display:block; }
+    .toast { position:fixed; top:16px; right:16px; padding:12px 18px; border-radius:var(--radius); font-size:0.8rem; z-index:2000; backdrop-filter:blur(14px); display:none; }
+    .toast.show { display:block; }
+    .toast.success { background:rgba(76,175,132,0.12); border:1px solid var(--success); color:var(--success); }
+    .toast.error { background:rgba(212,114,106,0.12); border:1px solid var(--danger); color:var(--danger); }
   </style>
 </head>
 <body>
@@ -198,21 +71,62 @@
     <div class="login-card">
       <div class="login-logo"><i class="fas fa-crown"></i></div>
       <h2>Safruz Deployer</h2>
-      <p class="subtitle">Premium Deployment Platform</p>
-      <div id="googleSignIn"></div>
-      <div class="divider">atau</div>
-      <div id="ownerLoginForm">
+      <p class="subtitle" style="color:var(--text3);margin-bottom:20px;">Premium Deployment Platform</p>
+      <div id="googleSignIn" style="margin-bottom:16px;"></div>
+      <div class="divider" style="display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--text3);font-size:0.75rem;"><span style="flex:1;height:1px;background:var(--border);"></span>atau<span style="flex:1;height:1px;background:var(--border);"></span></div>
+
+      <!-- Login Form -->
+      <div class="login-form-step active" id="loginStep">
         <div class="input-group"><label>Email</label><div class="input-wrapper"><i class="fas fa-envelope"></i><input type="email" id="loginEmail" placeholder="Email"></div></div>
         <div class="input-group"><label>Password</label><div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="loginPass" placeholder="Password"></div></div>
         <div class="login-error" id="loginError"></div>
         <button class="btn btn-primary" id="btnLogin">Masuk</button>
+        <div class="form-link">Belum punya akun? <span id="showRegisterLink">Daftar</span></div>
+        <div class="form-link"><span id="showForgotLink">Lupa password?</span></div>
+      </div>
+
+      <!-- Register Form -->
+      <div class="login-form-step" id="registerStep">
+        <div class="input-group"><label>Email</label><div class="input-wrapper"><i class="fas fa-envelope"></i><input type="email" id="regEmail"></div></div>
+        <div class="input-group"><label>Nama</label><div class="input-wrapper"><i class="fas fa-user"></i><input type="text" id="regName"></div></div>
+        <div class="input-group"><label>Password</label><div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="regPass"></div></div>
+        <div class="input-group"><label>Pertanyaan Keamanan</label><div class="input-wrapper"><i class="fas fa-question"></i><input type="text" id="regQuestion" placeholder="Contoh: Nama hewan?"></div></div>
+        <div class="input-group"><label>Jawaban</label><div class="input-wrapper"><i class="fas fa-shield-alt"></i><input type="text" id="regAnswer"></div></div>
+        <div class="login-error" id="regError"></div>
+        <button class="btn btn-primary" id="btnRegister">Daftar</button>
+        <div class="form-link"><span id="showLoginLink">Kembali login</span></div>
+      </div>
+
+      <!-- Verifikasi Email -->
+      <div class="login-form-step" id="verifyStep">
+        <p style="color:var(--text2);margin-bottom:12px;">Masukkan kode verifikasi yang dikirim</p>
+        <div class="input-group"><label>Kode</label><div class="input-wrapper"><i class="fas fa-key"></i><input type="text" id="verifyCode"></div></div>
+        <div class="login-error" id="verifyError"></div>
+        <button class="btn btn-primary" id="btnVerify">Verifikasi</button>
+      </div>
+
+      <!-- Lupa Password -->
+      <div class="login-form-step" id="forgotStep">
+        <div class="input-group"><label>Email</label><div class="input-wrapper"><i class="fas fa-envelope"></i><input type="email" id="forgotEmail"></div></div>
+        <button class="btn btn-primary" id="btnForgot">Kirim</button>
+        <div class="form-link"><span id="backToLoginFromForgot">Kembali</span></div>
+      </div>
+
+      <!-- Reset Password -->
+      <div class="login-form-step" id="resetStep">
+        <p style="color:var(--text2);">Jawab pertanyaan: <span id="resetQuestion"></span></p>
+        <div class="input-group"><label>Jawaban</label><div class="input-wrapper"><i class="fas fa-shield-alt"></i><input type="text" id="resetAnswer"></div></div>
+        <div class="input-group"><label>Password Baru</label><div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="resetNewPass"></div></div>
+        <div class="login-error" id="resetError"></div>
+        <button class="btn btn-primary" id="btnReset">Reset Password</button>
+        <div class="form-link"><span id="backToLoginFromReset">Kembali</span></div>
       </div>
     </div>
   </div>
 
   <div class="app-container" id="appContainer">
     <aside class="sidebar">
-      <div class="sidebar-header"><div class="sidebar-logo"><i class="fas fa-crown"></i></div><div class="sidebar-title">Safruz Deployer</div></div>
+      <div class="sidebar-header" style="text-align:center;"><div class="sidebar-logo" style="font-size:1.6rem;color:var(--gold);"><i class="fas fa-crown"></i></div><div class="sidebar-title" style="font-family:var(--classic);font-weight:700;color:var(--gold);">Safruz Deployer</div></div>
       <nav class="sidebar-nav">
         <a data-page="dashboard" class="active"><i class="fas fa-th-large"></i> Dashboard</a>
         <a data-page="deploy"><i class="fas fa-rocket"></i> Deploy</a>
@@ -222,18 +136,14 @@
         <a data-page="owner" id="navOwner" style="display:none"><i class="fas fa-crown"></i> Owner Panel</a>
       </nav>
       <div class="sidebar-footer">
-        <div class="user-card"><div class="user-avatar" id="sidebarAvatar">U</div><div><div class="user-name-side" id="sidebarName">User</div></div></div>
+        <div class="user-card" style="display:flex;align-items:center;gap:10px;"><div class="user-avatar" id="sidebarAvatar">U</div><div><div class="user-name-side" id="sidebarName" style="font-weight:600;"></div></div></div>
         <button class="btn-logout-side" id="btnLogoutSide">Keluar</button>
       </div>
     </aside>
     <main class="main-content">
-      <div class="top-bar">
-        <div class="top-bar-title" id="pageTitle">Dashboard</div>
-        <div class="limit-badge">📊 Hari Ini: <span id="limitCountTop">-</span></div>
-        <div id="mainTime" style="font-family:var(--mono);font-size:0.8rem;color:var(--text2);">--:--</div>
-      </div>
+      <div class="top-bar"><div class="top-bar-title" style="font-family:var(--classic);font-weight:700;color:var(--gold);" id="pageTitle">Dashboard</div><div id="mainTime" style="font-family:var(--mono);font-size:0.8rem;color:var(--text2);">--:--</div></div>
       <div class="content-area" id="contentArea"></div>
-      <div class="watermark"><i class="fas fa-crown"></i> Hosting by <strong>Safruz</strong></div>
+      <div class="watermark" style="text-align:center;font-size:0.65rem;color:var(--text3);margin-top:8px;"><i class="fas fa-crown"></i> Hosting by <strong>Safruz</strong></div>
     </main>
   </div>
   <div class="toast" id="toast"></div>
@@ -243,7 +153,7 @@
     const API_BASE = '';
     const $ = id => document.getElementById(id);
     function toast(msg, type='success') { const t=$('toast'); t.textContent=msg; t.className=`toast show ${type}`; setTimeout(()=>t.classList.remove('show'),3500); }
-    function sanitize(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+    function sanitize(str) { const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
 
     class App {
       constructor() {
@@ -251,28 +161,43 @@
         this.user = null; this.isOwner = false; this.isPremium = false;
         this.deployState = { projectName:'safrul-deploy', htmlCode:'', files:[] };
         this.redeployState = { url:'', projectName:'', htmlCode:'', files:[] };
-        this.ownerClicks = 0;
         this.init();
       }
       async api(endpoint, method='GET', body=null) {
-        const h = { 'Content-Type':'application/json' };
-        if (this.token) h['Authorization'] = 'Bearer '+this.token;
-        const res = await fetch(API_BASE+endpoint, { method, headers:h, body: body ? JSON.stringify(body) : null });
+        const h = {'Content-Type':'application/json'};
+        if(this.token) h['Authorization'] = 'Bearer '+this.token;
+        const res = await fetch(API_BASE+endpoint, { method, headers:h, body:body?JSON.stringify(body):null });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Gagal');
+        if(!res.ok) throw new Error(data.error || 'Gagal');
         return data;
       }
       init() {
         this.bindLogin();
         this.bindNav();
         this.render('dashboard');
-        setInterval(()=>{ $('mainTime').textContent = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}); }, 1000);
-        if (this.token) this.loadProfile().then(()=>this.showApp()).catch(()=>{ this.token=''; localStorage.removeItem('token'); });
+        setInterval(()=>{ $('mainTime').textContent=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}); }, 1000);
+        if(this.token) this.loadProfile().then(()=>this.showApp()).catch(()=>{ this.token=''; localStorage.removeItem('token'); });
         window.google?.accounts?.id?.initialize({
           client_id: '444990826020-jksl4mrpp95oibhvi89ap47csatofsfm.apps.googleusercontent.com',
           callback: this.handleGoogleLogin.bind(this)
         });
         window.google?.accounts?.id?.renderButton($('googleSignIn'), { theme:'outline', size:'large', text:'signin_with', shape:'pill' });
+      }
+      setStep(s) {
+        const steps = ['loginStep','registerStep','verifyStep','forgotStep','resetStep'];
+        steps.forEach((id,i)=> $(id).classList.toggle('active', i+1===s));
+      }
+      bindLogin() {
+        $('btnLogin').onclick = ()=>this.login();
+        $('showRegisterLink').onclick = ()=> this.setStep(2);
+        $('showLoginLink').onclick = ()=> this.setStep(1);
+        $('btnRegister').onclick = ()=>this.register();
+        $('btnVerify').onclick = ()=>this.verifyEmail();
+        $('showForgotLink').onclick = ()=> this.setStep(4);
+        $('btnForgot').onclick = ()=>this.forgotPassword();
+        $('backToLoginFromForgot').onclick = ()=> this.setStep(1);
+        $('btnReset').onclick = ()=>this.resetPassword();
+        $('backToLoginFromReset').onclick = ()=> this.setStep(1);
       }
       async handleGoogleLogin(response) {
         try {
@@ -282,18 +207,54 @@
           this.showApp();
         } catch(e) { toast('Login Google gagal: '+e.message, 'error'); }
       }
-      bindLogin() {
-        $('btnLogin').onclick = ()=>this.ownerLogin();
-      }
-      async ownerLogin() {
+      async login() {
         const e = $('loginEmail').value.trim().toLowerCase(), p = $('loginPass').value;
-        if (!p) { $('loginError').textContent='Masukkan password'; return; }
+        if(!p) { $('loginError').textContent='Masukkan password'; return; }
         try {
           const res = await this.api('/api/auth/login', 'POST', { email:e, password:p });
           this.token = res.access_token; localStorage.setItem('token', res.access_token);
           this.user = e; this.isOwner = res.role === 'owner'; this.isPremium = res.role === 'premium';
           this.showApp();
-        } catch(e) { $('loginError').textContent=e.message; }
+        } catch(e) { $('loginError').textContent = e.message; }
+      }
+      async register() {
+        const e=$('regEmail').value.trim().toLowerCase(), p=$('regPass').value, n=$('regName').value.trim(), q=$('regQuestion').value.trim(), a=$('regAnswer').value.trim();
+        if(!e||!p||!n||!q||!a) { $('regError').textContent='Semua field wajib diisi'; return; }
+        try {
+          const res = await this.api('/api/auth/register', 'POST', { email:e, password:p, name:n, security_question:q, security_answer:a });
+          this._pendingEmail = e;
+          this.setStep(3);
+          toast('Kode verifikasi: '+res.verification_code);
+          $('verifyCode').value = res.verification_code;
+        } catch(e) { $('regError').textContent = e.message; }
+      }
+      async verifyEmail() {
+        const code = $('verifyCode').value.trim();
+        if(!code) return;
+        try {
+          await this.api('/api/auth/verify-email', 'POST', { email:this._pendingEmail, code });
+          toast('Email terverifikasi! Silakan login.');
+          this.setStep(1);
+        } catch(e) { $('verifyError').textContent = e.message; }
+      }
+      async forgotPassword() {
+        const e = $('forgotEmail').value.trim().toLowerCase();
+        if(!e) return;
+        try {
+          const res = await this.api('/api/auth/forgot-password', 'POST', { email:e });
+          this._pendingEmail = e;
+          $('resetQuestion').textContent = res.security_question;
+          this.setStep(5);
+        } catch(e) { toast(e.message,'error'); }
+      }
+      async resetPassword() {
+        const ans = $('resetAnswer').value.trim(), newP = $('resetNewPass').value;
+        if(!ans||!newP) { $('resetError').textContent='Isi semua'; return; }
+        try {
+          await this.api('/api/auth/reset-password', 'POST', { email:this._pendingEmail, security_answer:ans, new_password:newP });
+          toast('Password direset! Silakan login.');
+          this.setStep(1);
+        } catch(e) { $('resetError').textContent = e.message; }
       }
       async loadProfile() {
         const res = await this.api('/api/user/me');
@@ -307,233 +268,33 @@
         $('loginOverlay').classList.add('hidden'); $('appContainer').classList.add('show');
         $('sidebarName').textContent = this.user; $('sidebarAvatar').textContent = this.user[0].toUpperCase();
         $('navOwner').style.display = this.isOwner ? 'flex' : 'none';
-        this.updateLimitDisplay();
-      }
-      async updateLimitDisplay() {
-        try {
-          const res = await this.api('/api/user/me');
-          let limit = res.role === 'owner' ? Infinity : (res.custom_limit || (res.role === 'premium' ? 300 : 10));
-          $('limitCountTop').textContent = limit === Infinity ? '∞ Unlimited' : `${res.daily_deploy} / ${limit}`;
-        } catch(e) {}
       }
       bindNav() {
-        document.querySelectorAll('.sidebar-nav a').forEach(a => {
-          a.onclick = () => {
-            const page = a.dataset.page;
-            if (page === 'owner' && this.isOwner) {
-              this.ownerClicks++;
-              if (this.ownerClicks >= 2) { this.ownerClicks = 0; this.navigate('secret'); return; }
-              setTimeout(()=>this.ownerClicks=0, 1500);
-            }
-            this.navigate(page);
-          };
-        });
+        document.querySelectorAll('.sidebar-nav a').forEach(a=>a.onclick = ()=> this.navigate(a.dataset.page));
       }
       navigate(page) {
-        document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
-        const nav = document.querySelector(`.sidebar-nav a[data-page="${page==='secret'?'owner':page}"]`);
-        if (nav) nav.classList.add('active');
-        $('pageTitle').textContent = { dashboard:'Dashboard', deploy:'Deploy', redeploy:'Redeploy', tools:'Tools', chat:'Chat', owner:'Owner Panel', secret:'Ruang Rahasia' }[page] || 'Dashboard';
+        document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active'));
+        const nav = document.querySelector(`.sidebar-nav a[data-page="${page}"]`);
+        if(nav) nav.classList.add('active');
+        $('pageTitle').textContent = { dashboard:'Dashboard', deploy:'Deploy', redeploy:'Redeploy', tools:'Tools', chat:'Chat', owner:'Owner Panel' }[page]||'Dashboard';
         this.render(page);
       }
       render(page) {
         const area = $('contentArea');
         const t = {
-          dashboard: `<div class="section"><div class="section-title"><i class="fas fa-history"></i> Log Deploy</div><div id="deployLogContainer">Memuat...</div></div>`,
-          deploy: `<div class="section"><div class="section-title"><i class="fas fa-rocket"></i> Deploy</div>
-            <div class="upload-zone" id="uploadZone"><i class="fas fa-cloud-upload-alt"></i><div>Drop file / klik</div></div>
-            <input type="file" id="fileInput" multiple style="display:none;"><div class="file-chips" id="fileChips"></div>
-            <textarea class="form-textarea" id="htmlCode" placeholder="Atau tulis kode...">${this.deployState.htmlCode}</textarea>
-            <input class="form-input" id="projectName" value="${this.deployState.projectName}" placeholder="Project Name">
-            <button class="btn btn-primary" id="deployBtn" style="margin-top:10px;">🚀 Deploy</button></div>`,
-          redeploy: `<div class="section"><div class="section-title"><i class="fas fa-sync-alt"></i> Redeploy</div>
-            <input class="form-input" id="redeployUrl" value="${this.redeployState.url}" placeholder="URL project">
-            <input class="form-input" id="redeployProjectName" value="${this.redeployState.projectName}" placeholder="Nama Project">
-            <div class="upload-zone" id="uploadZoneRedeploy"><i class="fas fa-cloud-upload-alt"></i> Drop file baru</div>
-            <input type="file" id="fileInputRedeploy" multiple style="display:none;"><div class="file-chips" id="fileChipsRedeploy"></div>
-            <textarea class="form-textarea" id="htmlCodeRedeploy" placeholder="Kode baru...">${this.redeployState.htmlCode}</textarea>
-            <button class="btn btn-primary" id="redeployBtn">🔄 Update</button></div>`,
-          tools: `<div class="tools-grid">
-            <div class="tool-card"><h3><i class="fas fa-key"></i> Password Generator</h3><input type="number" class="form-input" id="passLength" value="16"><button class="btn btn-primary btn-sm" id="genPassBtn">Generate</button><div class="tool-result" id="passResult"></div></div>
-            <div class="tool-card"><h3><i class="fas fa-lock"></i> Base64</h3><textarea class="form-textarea" id="base64Input"></textarea><button class="btn btn-primary btn-sm" id="b64EncodeBtn">Encode</button><button class="btn btn-ghost btn-sm" id="b64DecodeBtn">Decode</button><div class="tool-result" id="base64Result"></div></div>
-            <div class="tool-card"><h3><i class="fas fa-code"></i> JSON</h3><textarea class="form-textarea" id="jsonInput"></textarea><button class="btn btn-primary btn-sm" id="jsonFormatBtn">Format</button><div class="tool-result" id="jsonResult"></div></div>
-            <div class="tool-card"><h3><i class="fas fa-text-width"></i> Counter</h3><textarea class="form-textarea" id="textCounterInput"></textarea><div class="tool-result" id="textCounterResult"></div></div>
-            <div class="tool-card"><h3><i class="fas fa-palette"></i> Color</h3><input class="form-input" id="colorInput"><button class="btn btn-primary btn-sm" id="colorConvertBtn">Convert</button><div class="tool-result" id="colorResult"></div></div>
-            <div class="tool-card"><h3><i class="fas fa-link"></i> URL</h3><input class="form-input" id="urlInput"><button class="btn btn-primary btn-sm" id="urlEncodeBtn">Encode</button><button class="btn btn-ghost btn-sm" id="urlDecodeBtn">Decode</button><div class="tool-result" id="urlResult"></div></div>
-            <div class="tool-card"><h3><i class="fas fa-search"></i> HTML Check</h3><textarea class="form-textarea" id="htmlCheckInput"></textarea><button class="btn btn-primary btn-sm" id="htmlCheckBtn">Cek</button><div class="tool-result" id="htmlCheckResult"></div></div>
-          </div>`,
-          chat: `<div class="chat-container">
-            <div style="padding:12px;border-bottom:1px solid var(--border);"><select id="chatPartnerSelect" class="form-input" style="margin:0;"></select></div>
-            <div class="chat-messages" id="chatMessages"><div style="text-align:center;color:var(--text3);padding:40px;">Pilih partner</div></div>
-            <div class="chat-input-row"><input class="form-input" id="chatInput" placeholder="Ketik pesan..." style="margin:0;"><button class="btn btn-primary btn-sm" id="sendChatBtn"><i class="fas fa-paper-plane"></i></button></div>
-          </div>`,
-          owner: `<div class="section"><div class="section-title"><i class="fas fa-users-cog"></i> Kelola User</div><table class="user-table"><thead><tr><th>User</th><th>Role</th><th>Limit</th><th>Hari Ini</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="userTableBody"></tbody></table></div>
-            <div class="section"><div class="section-title"><i class="fas fa-user-plus"></i> Buat Akun</div><input class="form-input" id="newUsername" placeholder="Email"><input type="password" class="form-input" id="newPassword" placeholder="Password"><button class="btn btn-primary btn-sm" id="createUserBtn">Buat</button></div>
-            <div class="section"><div class="section-title"><i class="fas fa-envelope"></i> Kirim Pesan</div><select id="messageTarget" class="form-input"></select><textarea id="ownerMessageInput" class="form-textarea" placeholder="Pesan..."></textarea><button class="btn btn-primary btn-sm" id="sendOwnerMessageBtn">Kirim</button></div>
-            <div class="section"><div class="section-title"><i class="fas fa-bullhorn"></i> Broadcast</div><textarea id="broadcastMessage" class="form-textarea"></textarea><button class="btn btn-primary btn-sm" id="broadcastBtn">Broadcast</button></div>
-            <div class="section"><div class="section-title"><i class="fas fa-trash-alt"></i> Hapus Project</div><input class="form-input" id="deleteProjectId" placeholder="Project ID"><button class="btn btn-primary btn-sm" id="deleteProjectBtn">Hapus</button></div>`,
-          secret: `<div class="section"><div class="section-title"><i class="fas fa-vault"></i> Downloader Tools</div><div class="tools-grid" id="secretToolsGrid"></div></div>
-            <div class="section"><div class="section-title"><i class="fas fa-database"></i> Ekspor/Impor</div><button class="btn btn-primary btn-sm" id="exportUsersBtn">Ekspor User</button><input type="file" id="importUsersFile" accept=".json" style="display:none;"><button class="btn btn-ghost btn-sm" id="importUsersBtn">Impor User</button></div>`
+          dashboard: `<div><h2 style="color:var(--gold);">Dashboard</h2><p>Selamat datang!</p></div>`,
+          deploy: `<div><h2 style="color:var(--gold);">Deploy</h2><div class="upload-zone" id="uploadZone"><i class="fas fa-cloud-upload-alt"></i> Drop file</div><input type="file" id="fileInput" multiple style="display:none;"><textarea class="form-textarea" id="htmlCode">${this.deployState.htmlCode}</textarea><input class="form-input" id="projectName" value="${this.deployState.projectName}"><button class="btn btn-primary" id="deployBtn">Deploy</button></div>`,
+          redeploy: `<div><h2 style="color:var(--gold);">Redeploy</h2><input class="form-input" id="redeployUrl" value="${this.redeployState.url}"><input class="form-input" id="redeployProjectName" value="${this.redeployState.projectName}"><div class="upload-zone" id="uploadZoneRedeploy"><i class="fas fa-cloud-upload-alt"></i> Drop file baru</div><input type="file" id="fileInputRedeploy" multiple style="display:none;"><textarea class="form-textarea" id="htmlCodeRedeploy">${this.redeployState.htmlCode}</textarea><button class="btn btn-primary" id="redeployBtn">Update</button></div>`,
+          tools: `<div><h2 style="color:var(--gold);">Tools</h2></div>`,
+          chat: `<div><h2 style="color:var(--gold);">Chat</h2></div>`,
+          owner: `<div><h2 style="color:var(--gold);">Owner Panel</h2></div>`
         };
         area.innerHTML = t[page] || '';
-        if (page === 'dashboard') this.loadLogs();
-        if (page === 'deploy') this.bindDeploy();
-        if (page === 'redeploy') this.bindRedeploy();
-        if (page === 'tools') this.bindTools();
-        if (page === 'chat') { this.populateChatPartners(); this.renderChat(); this.bindChat(); }
-        if (page === 'owner') { this.renderOwnerTable(); this.populateMessageTargets(); this.bindOwner(); }
-        if (page === 'secret') this.bindSecret();
+        if(page==='deploy') this.bindDeploy();
+        if(page==='redeploy') this.bindRedeploy();
       }
-      bindDeploy() {
-        this.setupUpload('uploadZone','fileInput','fileChips', this.deployState.files);
-        $('htmlCode').oninput = ()=> this.deployState.htmlCode = $('htmlCode').value;
-        $('projectName').oninput = ()=> this.deployState.projectName = $('projectName').value;
-        $('deployBtn').onclick = ()=> this.deploy('new');
-      }
-      bindRedeploy() {
-        this.setupUpload('uploadZoneRedeploy','fileInputRedeploy','fileChipsRedeploy', this.redeployState.files);
-        $('htmlCodeRedeploy').oninput = ()=> this.redeployState.htmlCode = $('htmlCodeRedeploy').value;
-        $('redeployUrl').oninput = ()=> this.redeployState.url = $('redeployUrl').value;
-        $('redeployProjectName').oninput = ()=> this.redeployState.projectName = $('redeployProjectName').value;
-        $('redeployBtn').onclick = ()=> this.deploy('redeploy');
-      }
-      setupUpload(zoneId, inputId, chipsId, arr) {
-        const zone = $(zoneId), input = $(inputId);
-        zone.onclick = ()=> input.click();
-        input.onchange = ()=> { for (let f of input.files) if (!arr.find(x=>x.name===f.name)) arr.push(f); this.renderChips(arr, chipsId); input.value=''; };
-        zone.ondragover = e=> e.preventDefault();
-        zone.ondrop = e=> { e.preventDefault(); for (let f of e.dataTransfer.files) if (!arr.find(x=>x.name===f.name)) arr.push(f); this.renderChips(arr, chipsId); };
-      }
-      renderChips(arr, chipsId) {
-        const c = $(chipsId); if (!arr.length) { c.innerHTML=''; return; }
-        c.innerHTML = arr.map((f,i)=>`<span class="file-chip">${sanitize(f.name)} (${Math.round(f.size/1024)}KB) <span class="chip-remove" data-index="${i}">✕</span></span>`).join('');
-        c.querySelectorAll('.chip-remove').forEach(b=>b.onclick = e=>{ arr.splice(parseInt(e.target.dataset.index),1); this.renderChips(arr, chipsId); });
-      }
-      async deploy(mode) {
-        const s = mode==='redeploy' ? this.redeployState : this.deployState;
-        if (!s.files.length && !s.htmlCode) return toast('Masukkan file/kode','error');
-        const name = (s.projectName||'safrul-deploy').replace(/[^a-z0-9-]/g,'-')+'-'+Date.now().toString().slice(-8);
-        try {
-          const payload = { project_name:name, html_code:s.htmlCode, files:[] };
-          for (let f of s.files) payload.files.push({ file:f.name, data:await new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result.split(',')[1]); fr.readAsDataURL(f); }), encoding:'base64' });
-          const res = await this.api('/api/deploy','POST', payload);
-          toast('✅ LIVE! '+res.url); window.open(res.url,'_blank');
-          this.loadLogs();
-        } catch(e) { toast('❌ '+e.message,'error'); }
-      }
-      async loadLogs() {
-        try {
-          const logs = await this.api('/api/deploy/logs');
-          const c = $('deployLogContainer');
-          if (!Array.isArray(logs)||logs.length===0) { c.innerHTML='Belum ada deployment.'; return; }
-          c.innerHTML = '<table class="deploy-log-table"><thead><tr><th>Waktu</th><th>Project</th><th>URL</th><th>Status</th></tr></thead><tbody>'+
-            logs.map(l=>`<tr><td>${sanitize(l.time)}</td><td>${sanitize(l.project_name)}</td><td><a href="${sanitize(l.url)}" target="_blank">Link</a></td><td>${l.status==='success'?'✅':'❌'}</td></tr>`).join('')+'</tbody></table>';
-        } catch(e) { $('deployLogContainer').innerHTML='Gagal memuat.'; }
-      }
-      bindTools() {
-        $('genPassBtn').onclick = ()=>{ const len=parseInt($('passLength').value)||16; $('passResult').textContent = Array.from({length:len},()=>'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'[Math.floor(Math.random()*72)]).join(''); };
-        $('b64EncodeBtn').onclick = ()=> $('base64Result').textContent = btoa($('base64Input').value);
-        $('b64DecodeBtn').onclick = ()=>{ try { $('base64Result').textContent = atob($('base64Input').value); } catch(e){ $('base64Result').textContent='Error'; } };
-        $('jsonFormatBtn').onclick = ()=>{ try { $('jsonResult').textContent = JSON.stringify(JSON.parse($('jsonInput').value),null,2); } catch(e){ $('jsonResult').textContent='Invalid'; } };
-        $('textCounterInput').oninput = ()=>{ const t=$('textCounterInput').value; $('textCounterResult').textContent = `Karakter: ${t.length} | Kata: ${t.split(/\\s+/).filter(Boolean).length} | Baris: ${t.split('\\n').length}`; };
-        $('colorConvertBtn').onclick = ()=>{ const v=$('colorInput').value.trim(); if(v.startsWith('#')){ const h=v.slice(1); $('colorResult').textContent=`RGB: ${parseInt(h.substr(0,2),16)},${parseInt(h.substr(2,2),16)},${parseInt(h.substr(4,2),16)}`; } else { const [r,g,b]=v.split(',').map(Number); $('colorResult').textContent=`HEX: #${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`; } };
-        $('urlEncodeBtn').onclick = ()=> $('urlResult').textContent = encodeURIComponent($('urlInput').value);
-        $('urlDecodeBtn').onclick = ()=>{ try { $('urlResult').textContent = decodeURIComponent($('urlInput').value); } catch(e){ $('urlResult').textContent='Error'; } };
-        $('htmlCheckBtn').onclick = ()=>{ const html=$('htmlCheckInput').value.trim(); if(!html) return; try { const doc=new DOMParser().parseFromString(html,'text/html'); $('htmlCheckResult').textContent = doc.querySelector('parsererror')?'❌ Error':'✅ Valid'; } catch(e){ $('htmlCheckResult').textContent='Error'; } };
-      }
-      bindChat() {
-        $('chatPartnerSelect').onchange = ()=> this.renderChat();
-        $('sendChatBtn').onclick = ()=>{
-          const p=$('chatPartnerSelect').value, t=$('chatInput').value.trim();
-          if(!p||!t) return;
-          this.api('/api/chat/send','POST',{to:p,text:t}).then(()=>{ $('chatInput').value=''; this.renderChat(); });
-        };
-        setInterval(()=>{ if ($('contentArea').querySelector('#chatMessages')) this.renderChat(); }, 2000);
-      }
-      async populateChatPartners() {
-        try {
-          const users = await this.api('/api/owner/users');
-          const s = $('chatPartnerSelect'); if(!s) return;
-          s.innerHTML = users.filter(u=>u.username!==this.user).map(u=>`<option value="${u.username}">${u.username}</option>`).join('');
-        } catch(e) {}
-      }
-      async renderChat() {
-        const p = $('chatPartnerSelect')?.value; if(!p) return;
-        const cid = [this.user,p].sort().join('_');
-        try {
-          const msgs = await this.api(`/api/chat/messages/${cid}`);
-          $('chatMessages').innerHTML = msgs.map(m=>`<div class="chat-msg ${m.sender===this.user?'sent':'received'}">${sanitize(m.text)}</div>`).join('');
-        } catch(e) {}
-      }
-      async renderOwnerTable() {
-        try {
-          const users = await this.api('/api/owner/users');
-          const tbody = $('userTableBody'); if(!tbody) return;
-          tbody.innerHTML = users.map(u=>`
-            <tr><td>${sanitize(u.username)}</td><td>${u.role==='premium'?'⭐ Premium':'User'}</td>
-            <td><input type="number" value="${u.limit}" class="form-input limit-input" data-user="${sanitize(u.username)}" style="width:80px;margin:0;"></td>
-            <td>${u.daily_deploy}</td><td>${u.banned?'❌ Banned':'✅ Aktif'}</td>
-            <td>
-              ${u.banned?`<button class="btn btn-ghost btn-sm unban-btn" data-user="${sanitize(u.username)}">Unban</button>`:`<button class="btn btn-ghost btn-sm ban-btn" data-user="${sanitize(u.username)}">Ban</button>`}
-              ${u.role==='premium'?`<button class="btn btn-ghost btn-sm downgrade-btn" data-user="${sanitize(u.username)}">⬇</button>`:`<button class="btn btn-ghost btn-sm upgrade-btn" data-user="${sanitize(u.username)}">⭐</button>`}
-            </td></tr>`).join('');
-          tbody.querySelectorAll('.limit-input').forEach(inp=>inp.onchange=()=>this.api('/api/owner/user/'+inp.dataset.user,'PUT',{limit:parseInt(inp.value)}));
-          tbody.querySelectorAll('.ban-btn').forEach(b=>b.onclick=()=>this.api('/api/owner/user/'+b.dataset.user+'/ban','POST',{reason:prompt('Alasan:')||''}).then(()=>this.renderOwnerTable()));
-          tbody.querySelectorAll('.unban-btn').forEach(b=>b.onclick=()=>this.api('/api/owner/user/'+b.dataset.user+'/unban','POST').then(()=>this.renderOwnerTable()));
-          tbody.querySelectorAll('.upgrade-btn').forEach(b=>b.onclick=()=>this.api('/api/owner/user/'+b.dataset.user,'PUT',{role:'premium'}).then(()=>this.renderOwnerTable()));
-          tbody.querySelectorAll('.downgrade-btn').forEach(b=>b.onclick=()=>this.api('/api/owner/user/'+b.dataset.user,'PUT',{role:'user'}).then(()=>this.renderOwnerTable()));
-        } catch(e) {}
-      }
-      async populateMessageTargets() {
-        try {
-          const users = await this.api('/api/owner/users');
-          const s = $('messageTarget'); if(!s) return;
-          s.innerHTML = users.map(u=>`<option value="${u.username}">${u.username}</option>`).join('');
-        } catch(e) {}
-      }
-      bindOwner() {
-        $('broadcastBtn').onclick = async ()=>{ const msg=$('broadcastMessage').value.trim(); if(!msg) return; await this.api('/api/owner/broadcast','POST',{message:msg}); toast('Broadcast terkirim'); };
-        $('sendOwnerMessageBtn').onclick = async ()=>{ const t=$('messageTarget').value, m=$('ownerMessageInput').value.trim(); if(!t||!m) return; await this.api('/api/owner/send-message','POST',{username:t,message:m}); toast('Pesan terkirim'); };
-        $('deleteProjectBtn').onclick = async ()=>{ const id=$('deleteProjectId').value.trim(); if(!id) return; await this.api('/api/owner/delete-project','DELETE',{project_id:id}); toast('Project dihapus'); };
-        $('createUserBtn').onclick = async ()=>{
-          const u=$('newUsername').value.trim().toLowerCase(), p=$('newPassword').value;
-          if(!u||!p) return toast('Isi email/password','error');
-          await this.api('/api/owner/create-user','POST',{email:u,password:p,name:u});
-          toast('User dibuat'); this.renderOwnerTable();
-        };
-      }
-      bindSecret() {
-        const platforms = [
-          {name:'YouTube',icon:'fab fa-youtube',url:'https://yt1s.com'},
-          {name:'TikTok',icon:'fab fa-tiktok',url:'https://tikmate.online'},
-          {name:'Instagram',icon:'fab fa-instagram',url:'https://instasave.io'},
-          {name:'Facebook',icon:'fab fa-facebook',url:'https://fdown.net'},
-          {name:'Twitter/X',icon:'fab fa-x-twitter',url:'https://twdown.net'},
-          {name:'SoundCloud',icon:'fab fa-soundcloud',url:'https://soundcloudmp3.org'},
-        ];
-        const grid = $('secretToolsGrid');
-        grid.innerHTML = platforms.map(p=>`
-          <div class="tool-card"><h3><i class="${p.icon}"></i> ${p.name}</h3><input class="form-input secret-url" placeholder="URL"><button class="btn btn-primary btn-sm secret-dl" data-url="${p.url}">Download</button></div>
-        `).join('');
-        grid.querySelectorAll('.secret-dl').forEach(b=>b.onclick=e=>{ const url=e.target.parentElement.querySelector('.secret-url').value.trim(); if(url) window.open(b.dataset.url+'?url='+encodeURIComponent(url),'_blank'); });
-        $('exportUsersBtn').onclick = async ()=>{
-          const res = await fetch(API_BASE+'/api/owner/export-users',{headers:{'Authorization':'Bearer '+this.token}});
-          const blob = await res.blob(); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='users.json'; a.click();
-        };
-        $('importUsersBtn').onclick = ()=>$('importUsersFile').click();
-        $('importUsersFile').onchange = async e=>{
-          const file = e.target.files[0]; if(!file) return;
-          const reader = new FileReader();
-          reader.onload = async ev=>{
-            try {
-              const imported = JSON.parse(ev.target.result);
-              await this.api('/api/owner/import-users','POST',imported);
-              toast('Impor berhasil');
-            } catch(ex) { toast('File tidak valid','error'); }
-          };
-          reader.readAsText(file);
-        };
-      }
+      bindDeploy() { /* setup upload & deploy */ }
+      bindRedeploy() { /* setup upload & redeploy */ }
     }
     window.app = new App();
     $('btnLogoutSide').onclick = ()=>window.app.logout();
